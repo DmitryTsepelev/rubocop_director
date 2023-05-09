@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "rubocop_director"
+
+RubocopDirector::Runner.new(ARGV).perform
