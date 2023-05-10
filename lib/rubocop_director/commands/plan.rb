@@ -5,73 +5,49 @@ require "date"
 
 require "rubocop_director/rubocop_stats"
 require "rubocop_director/git_log_stats"
+require "rubocop_director/file_stats_builder"
 require "rubocop_director/output_formatter"
 
 module RubocopDirector
   module Commands
     class Plan
+      include Dry::Monads[:result]
+      include Dry::Monads::Do.for(:run)
+
       def initialize(since)
         @since = since || Date.new
       end
 
       def run
-        puts "[1/3] Running rubocop to get the list of offences to fix..."
-        rubocop_json = RubocopStats.new.fetch
+        config = yield load_config
+        update_counts = yield load_git_stats
+        rubocop_json = yield load_rubocop_json
+        ranged_files = yield range_files(rubocop_json:, update_counts:, config:)
 
-        puts "[2/3] Checking git history since #{@since} to find hot files..."
-        update_counts = GitLogStats.new(@since).fetch
-
-        puts "[3/3] Calculating a list of files to refactor..."
-        ranged_files =
-          file_stats(rubocop_json, update_counts)
-            .sort_by { _1[:value] }
-            .reverse
-
-        total_value = ranged_files.sum { _1[:value] }
-
-        OutputFormatter.new(ranged_files:, total_value:, since: @since).call
+        OutputFormatter.new(ranged_files: ranged_files, since: @since).call
       end
 
       private
 
-      def cop_weight(cop_name)
-        (config.dig("weights", cop_name) || config["default_cop_weight"]).tap do |weight|
-          next if weight
-
-          raise ArgumentError, "could not find weight for #{cop_name} and default weight is not configured"
-        end
+      def load_config
+        Success(YAML.load_file(CONFIG_NAME))
+      rescue Errno::ENOENT
+        Failure("#{CONFIG_NAME} not found, generate it using --generate-config")
       end
 
-      def config
-        @config ||= YAML.load_file(".rubocop-director.yml")
+      def load_git_stats
+        puts "[1/3] Checking git history since #{@since} to find hot files..."
+        GitLogStats.new(@since).fetch
       end
 
-      def update_weight
-        config["update_weight"].tap do |weight|
-          next if weight
-
-          raise ArgumentError, "update_weight is not configured"
-        end
+      def load_rubocop_json
+        puts "[2/3] Running rubocop to get the list of offences to fix..."
+        RubocopStats.new.fetch
       end
 
-      def file_stats(rubocop_json, update_counts)
-        files_with_offenses = rubocop_json["files"].select { |file| file["offenses"].any? }
-
-        files_with_offenses.map do |file|
-          stats = {
-            path: file["path"],
-            updates_count: update_counts[file["path"]] || 0,
-            offense_counts: file["offenses"].group_by { |offense| offense["cop_name"] }.transform_values(&:count)
-          }
-
-          stats[:value] = find_refactoring_value(stats)
-
-          stats
-        end
-      end
-
-      def find_refactoring_value(file)
-        (file[:offense_counts].sum { |cop_name, count| cop_weight(cop_name) * count } * file[:updates_count] * update_weight).to_i
+      def range_files(rubocop_json:, update_counts:, config:)
+        puts "[3/3] Calculating a list of files to refactor..."
+        RubocopDirector::FileStatsBuilder.new(rubocop_json:, update_counts:, config:).build
       end
     end
   end

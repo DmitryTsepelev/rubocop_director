@@ -1,6 +1,10 @@
+require "dry/monads"
+
 module RubocopDirector
   module Commands
     class GenerateConfig
+      include Dry::Monads[:result]
+
       def run
         # TODO: check file exists
         todo = YAML.load_file(".rubocop_todo.yml")
@@ -10,13 +14,13 @@ module RubocopDirector
         end
 
         # TODO: warn if file exists
-        File.open('.rubocop-director.yml', 'w') do |f|
-          f.write({
-            'update_weight' => 1,
-            'default_cop_weight' => 1,
-            'weights' => weights,
-          }.to_yaml)
-        end
+        File.write(".rubocop-director.yml", {
+          "update_weight" => 1,
+          "default_cop_weight" => 1,
+          "weights" => weights
+        }.to_yaml)
+
+        Success("Config generated")
       end
     end
   end

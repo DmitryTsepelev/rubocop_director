@@ -7,12 +7,14 @@ module RubocopDirector
   class Runner
     def initialize(args)
       arg_parser.parse(args)
-
       @command ||= Commands::Plan.new(@since)
     end
 
     def perform
-      @command.run
+      @command.run.either(
+        ->(success_message) { puts success_message },
+        ->(failure_message) { puts "Failure: #{failure_message}" }
+      )
     end
 
     private
