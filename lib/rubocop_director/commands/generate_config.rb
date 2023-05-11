@@ -4,10 +4,12 @@ module RubocopDirector
   module Commands
     class GenerateConfig
       include Dry::Monads[:result]
+      include Dry::Monads::Do.for(:run)
+
+      RUBOCOP_TODO = ".rubocop_todo.yml"
 
       def run
-        # TODO: check file exists
-        todo = YAML.load_file(".rubocop_todo.yml")
+        todo = yield load_config
 
         weights = todo.keys.each_with_object({}).each do |cop, acc|
           acc.merge!(cop => 1)
@@ -21,6 +23,14 @@ module RubocopDirector
         }.to_yaml)
 
         Success("Config generated")
+      end
+
+      private
+
+      def load_config
+        Success(YAML.load_file(RUBOCOP_TODO))
+      rescue Errno::ENOENT
+        Failure("#{RUBOCOP_TODO} not found, generate it using `rubocop --regenerate-todo`")
       end
     end
   end

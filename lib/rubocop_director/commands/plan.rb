@@ -15,7 +15,7 @@ module RubocopDirector
       include Dry::Monads::Do.for(:run)
 
       def initialize(since)
-        @since = since || Date.new
+        @since = since || "1995-01-01"
       end
 
       def run
@@ -32,22 +32,22 @@ module RubocopDirector
       def load_config
         Success(YAML.load_file(CONFIG_NAME))
       rescue Errno::ENOENT
-        Failure("#{CONFIG_NAME} not found, generate it using --generate-config")
+        Failure("#{CONFIG_NAME} not found, generate it using `rubocop-director --generate-config`")
       end
 
       def load_git_stats
-        puts "[1/3] Checking git history since #{@since} to find hot files..."
+        puts "💡 Checking git history since #{@since} to find hot files..."
         GitLogStats.new(@since).fetch
       end
 
       def load_rubocop_json
-        puts "[2/3] Running rubocop to get the list of offences to fix..."
+        puts "💡🎥 Running rubocop to get the list of offences to fix..."
         RubocopStats.new.fetch
       end
 
       def range_files(rubocop_json:, update_counts:, config:)
-        puts "[3/3] Calculating a list of files to refactor..."
-        RubocopDirector::FileStatsBuilder.new(rubocop_json: rubocop_json, update_counts: rubocop_json, config: config).build
+        puts "💡🎥🎬 Calculating a list of files to refactor..."
+        RubocopDirector::FileStatsBuilder.new(rubocop_json: rubocop_json, update_counts: update_counts, config: config).build
       end
     end
   end

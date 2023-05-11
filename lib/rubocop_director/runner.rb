@@ -13,7 +13,7 @@ module RubocopDirector
     def perform
       @command.run.either(
         ->(success_message) { puts success_message },
-        ->(failure_message) { puts "Failure: #{failure_message}" }
+        ->(failure_message) { puts "\nFailure: #{failure_message}" }
       )
     end
 
@@ -29,7 +29,7 @@ module RubocopDirector
           @since = since
         end
 
-        p.on("-h", "--help", "Prints this help") do
+        p.on("--help", "Prints this help") do
           puts p
           exit
         end

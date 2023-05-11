@@ -29,7 +29,7 @@ module RubocopDirector
 
     attr_reader :rubocop_json, :update_counts, :config
 
-    def files_with_offenses = rubocop_json["files"].select { |file| file["offenses"].any? }
+    def files_with_offenses = rubocop_json.select { |file| file["offenses"].any? }
 
     def find_refactoring_value(file)
       update_weight = yield fetch_update_weight
@@ -39,7 +39,7 @@ module RubocopDirector
         cop_weight * count
       end
 
-      Success((offence_sum * file[:updates_count] * update_weight).to_i)
+      Success((offence_sum * file[:updates_count] * update_weight).to_f)
     end
 
     def fetch_cop_weight(cop_name)
@@ -48,7 +48,7 @@ module RubocopDirector
       if weight
         Success(weight)
       else
-        Failure("could not find weight for #{cop_name} and default weight is not configured")
+        Failure("could not find weight for #{cop_name} and `default_cop_weight` is not configured")
       end
     end
 
@@ -58,7 +58,7 @@ module RubocopDirector
       if weight
         Success(weight)
       else
-        Failure("update_weight is not configured")
+        Failure("`update_weight` is not configured")
       end
     end
   end
