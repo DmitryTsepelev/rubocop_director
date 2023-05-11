@@ -22,7 +22,7 @@ module RubocopDirector
         config = yield load_config
         update_counts = yield load_git_stats
         rubocop_json = yield load_rubocop_json
-        ranged_files = yield range_files(rubocop_json:, update_counts:, config:)
+        ranged_files = yield range_files(rubocop_json: rubocop_json, update_counts: update_counts, config: config)
 
         OutputFormatter.new(ranged_files: ranged_files, since: @since).call
       end
@@ -47,7 +47,7 @@ module RubocopDirector
 
       def range_files(rubocop_json:, update_counts:, config:)
         puts "[3/3] Calculating a list of files to refactor..."
-        RubocopDirector::FileStatsBuilder.new(rubocop_json:, update_counts:, config:).build
+        RubocopDirector::FileStatsBuilder.new(rubocop_json: rubocop_json, update_counts: rubocop_json, config: config).build
       end
     end
   end
