@@ -1,6 +1,6 @@
 # RubocopDirector
 
-Plan your refactorings using Rubocop TODO file and git history.
+A command–line utility for refactoring planning. It uses `.rubocop_todo.yml` and git history to prioritize a list of refactorings that can bring the most value.
 
 ## Installation
 
@@ -41,9 +41,9 @@ bundle exec rubocop-director
 As a result you'll get something like this:
 
 ```bash
-[1/3] Running rubocop to get the list of offences to fix...
-[2/3] Checking git history since -4712-01-01 to find hot files...
-[3/3] Calculating a list of files to refactor...
+💡 Checking git history since 1995-01-01 to find hot files...
+💡🎥 Running rubocop to get the list of offences to fix...
+💡🎥🎬 Calculating a list of files to refactor...
 --------------------
 spec/models/user.rb
 updated 10 times since -4712-01-01
@@ -55,6 +55,8 @@ updated 20 times since -4712-01-01
 offences: Rspec/BeEql - 4
 refactoring value: 90 (45%)
 ```
+
+> Want a different output format (e.g., CSV)? Let me know, open an issue!
 
 Value is calculated using a formula: `sum of value from each cop (<number of offences> * <cop weight> * <number of file updates> * <update weight>)`.
 
