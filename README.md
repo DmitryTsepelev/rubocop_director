@@ -68,7 +68,7 @@ bundle exec rubocop-director --since=2023-01-01
 
 ## Development
 
-After checking out the repo, run `bundle insatll` to install dependencies
+After checking out the repo, run `bundle install` to install dependencies
 
 ## Contributing
 
