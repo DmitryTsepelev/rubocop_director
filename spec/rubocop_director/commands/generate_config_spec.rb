@@ -52,4 +52,21 @@ RSpec.describe RubocopDirector::Commands::GenerateConfig do
       expect(File).not_to have_received(:write)
     end
   end
+
+  context "when .rubocop-director.yml config is already generated" do
+    before do
+      allow(File).to receive(:file?).with(".rubocop-director.yml").and_return(true)
+    end
+
+     it "returns failure" do
+      expect(subject).to be_failure
+      expect(subject.failure).to eq(".rubocop-director.yml already exists")
+    end
+
+    it "not creates a new file" do
+      subject
+
+      expect(File).not_to have_received(:write)
+    end
+  end
 end
