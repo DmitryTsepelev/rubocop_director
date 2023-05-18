@@ -76,7 +76,8 @@ RSpec.describe RubocopDirector::Commands::GenerateConfig do
       end
 
       it "not creates a new file" do
-        expect(subject).to be_failure
+        expect(subject).to be_success
+        expect(subject.value!).to eq("previous version of .rubocop-director.yml was preserved.")
 
         expect(File).not_to have_received(:write)
       end

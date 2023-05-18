@@ -9,6 +9,8 @@ module RubocopDirector
       RUBOCOP_TODO = ".rubocop_todo.yml"
 
       def run
+        return Success("previous version of #{CONFIG_NAME} was preserved.") if config_present? && !override_config?
+
         todo = yield load_config
 
         weights = todo.keys.each_with_object({}).each do |cop, acc|
@@ -27,15 +29,20 @@ module RubocopDirector
       private
 
       def load_config
-        if File.file?(CONFIG_NAME)
-          puts("#{CONFIG_NAME} already exists, do you want to override it? (y, n)")
-
-          return Failure("previous version of #{CONFIG_NAME} was preserved.") unless $stdin.gets.chomp == "y"
-        end
-
         Success(YAML.load_file(RUBOCOP_TODO))
       rescue Errno::ENOENT
         Failure("#{RUBOCOP_TODO} not found, generate it using `rubocop --regenerate-todo`")
+      end
+
+      def config_present?
+        return true if File.file?(CONFIG_NAME)
+      end
+
+      def override_config?
+        puts("#{CONFIG_NAME} already exists, do you want to override it? (y, n)")
+        option = $stdin.gets.chomp
+
+        return true if option == "y"
       end
     end
   end
