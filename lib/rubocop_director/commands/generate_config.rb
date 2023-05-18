@@ -26,13 +26,12 @@ module RubocopDirector
 
       private
 
-      def load_config 
+      def load_config
         if File.file?(CONFIG_NAME)
           puts("#{CONFIG_NAME} already exists, do you want to override it? (y, n)")
 
-          return Failure("previous version of #{CONFIG_NAME} was preserved.") unless STDIN.gets.chomp() == 'y'
+          return Failure("previous version of #{CONFIG_NAME} was preserved.") unless $stdin.gets.chomp == "y"
         end
-
 
         Success(YAML.load_file(RUBOCOP_TODO))
       rescue Errno::ENOENT
