@@ -76,8 +76,8 @@ RSpec.describe RubocopDirector::Commands::Plan do
 
   it "puts to stdout" do
     subject
-    expect(command).to have_received(:puts).ordered.with("💡 Checking git history since 1995-01-01 to find hot files...")
-    expect(command).to have_received(:puts).ordered.with("💡🎥 Running rubocop to get the list of offences to fix...")
+    expect(command).to have_received(:puts).ordered.with("💡 Running rubocop to get the list of offences to fix...")
+    expect(command).to have_received(:puts).ordered.with("💡🎥 Checking git history since 1995-01-01 to find hot files...")
     expect(command).to have_received(:puts).ordered.with("💡🎥🎬 Calculating a list of files to refactor...")
   end
 
@@ -105,8 +105,8 @@ RSpec.describe RubocopDirector::Commands::Plan do
 
     it "puts to stdout with passed date" do
       subject
-      expect(command).to have_received(:puts).ordered.with("💡 Checking git history since 2023-01-01 to find hot files...")
-      expect(command).to have_received(:puts).ordered.with("💡🎥 Running rubocop to get the list of offences to fix...")
+      expect(command).to have_received(:puts).ordered.with("💡 Running rubocop to get the list of offences to fix...")
+      expect(command).to have_received(:puts).ordered.with("💡🎥 Checking git history since #{since} to find hot files...")
       expect(command).to have_received(:puts).ordered.with("💡🎥🎬 Calculating a list of files to refactor...")
     end
   end
@@ -129,6 +129,13 @@ RSpec.describe RubocopDirector::Commands::Plan do
       expect(subject).to be_failure
       expect(subject.failure).to eq("git log stats error")
     end
+
+    it "puts to stdout" do
+      subject
+      expect(command).to have_received(:puts).ordered.with("💡 Running rubocop to get the list of offences to fix...")
+      expect(command).to have_received(:puts).ordered.with("💡🎥 Checking git history since 1995-01-01 to find hot files...")
+      expect(command).not_to have_received(:puts).ordered.with("💡🎥🎬 Calculating a list of files to refactor...")
+    end
   end
 
   context "when RubocopStats returns failure" do
@@ -137,6 +144,13 @@ RSpec.describe RubocopDirector::Commands::Plan do
     it "returns failure" do
       expect(subject).to be_failure
       expect(subject.failure).to eq("rubocop stats error")
+    end
+
+    it "puts to stdout" do
+      subject
+      expect(command).to have_received(:puts).ordered.with("💡 Running rubocop to get the list of offences to fix...")
+      expect(command).not_to have_received(:puts).ordered.with("💡🎥 Checking git history since #{since} to find hot files...")
+      expect(command).not_to have_received(:puts).ordered.with("💡🎥🎬 Calculating a list of files to refactor...")
     end
   end
 end

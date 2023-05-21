@@ -20,8 +20,8 @@ module RubocopDirector
 
       def run
         config = yield load_config
-        update_counts = yield load_git_stats
         rubocop_json = yield load_rubocop_json
+        update_counts = yield load_git_stats
         ranged_files = yield range_files(rubocop_json: rubocop_json, update_counts: update_counts, config: config)
 
         OutputFormatter.new(ranged_files: ranged_files, since: @since).call
@@ -35,19 +35,19 @@ module RubocopDirector
         Failure("#{CONFIG_NAME} not found, generate it using `rubocop-director --generate-config`")
       end
 
-      def load_git_stats
-        puts "💡 Checking git history since #{@since} to find hot files..."
-        GitLogStats.new(@since).fetch
+      def load_rubocop_json
+        puts "💡 Running rubocop to get the list of offences to fix..."
+        RubocopStats.new.fetch
       end
 
-      def load_rubocop_json
-        puts "💡🎥 Running rubocop to get the list of offences to fix..."
-        RubocopStats.new.fetch
+      def load_git_stats
+        puts "💡🎥 Checking git history since #{@since} to find hot files..."
+        GitLogStats.new(@since).fetch
       end
 
       def range_files(rubocop_json:, update_counts:, config:)
         puts "💡🎥🎬 Calculating a list of files to refactor..."
-        RubocopDirector::FileStatsBuilder.new(rubocop_json: rubocop_json, update_counts: update_counts, config: config).build
+        FileStatsBuilder.new(rubocop_json: rubocop_json, update_counts: update_counts, config: config).build
       end
     end
   end
