@@ -30,7 +30,7 @@ module RubocopDirector
     end
 
     def temp_config(initial_config:)
-      initial_config.dig("inherit_from").delete(".rubocop_todo.yml")
+      initial_config.dig("inherit_from")&.delete(".rubocop_todo.yml")
 
       Success(File.write(TEMP_CONFIG_PATH, initial_config.to_yaml))
     rescue
@@ -48,7 +48,7 @@ module RubocopDirector
     end
 
     def remove_temp_config
-      Success(File.delete(TEMP_CONFIG_PATH)) if File.exist?(TEMP_CONFIG_PATH)
+      Success(File.delete(TEMP_CONFIG_PATH))
     end
   end
 end
