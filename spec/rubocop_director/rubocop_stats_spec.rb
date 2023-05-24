@@ -16,7 +16,7 @@ RSpec.describe RubocopDirector::RubocopStats do
 
   context "when initial config is not loaded" do
     before do
-      expect(YAML).to receive(:load_file).with(config_path).and_raise(StandardError)
+      expect(YAML).to receive(:load_file).with(config_path).and_raise(Errno::ENOENT)
     end
 
     it "returns failure" do
@@ -27,12 +27,12 @@ RSpec.describe RubocopDirector::RubocopStats do
 
   context "when temp config is not created" do
     before do
-      allow(File).to receive(:write).with(tmp_config_path, config_json.to_yaml).and_raise StandardError
+      allow(File).to receive(:write).with(tmp_config_path, config_json.to_yaml).and_raise IOError
     end
 
     it "returns failure" do
       expect(subject).to be_failure
-      expect(subject.failure).to eq("Failed to create a temporary config file to generate stats")
+      expect(subject.failure).to eq("Failed to create a temporary config file to generate stats: IOError")
     end
 
     it "does not run rubocop command" do

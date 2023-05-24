@@ -13,7 +13,7 @@ module RubocopDirector
 
     def fetch
       config = yield load_config
-      yield temp_config(initial_config: config)
+      yield generate_temp_rubocop_config_without_todo(initial_config: config)
 
       stats = yield generate_stats
       yield remove_temp_config
@@ -25,16 +25,16 @@ module RubocopDirector
 
     def load_config
       Success(YAML.load_file("./.rubocop.yml"))
-    rescue
+    rescue Errno::ENOENT
       Failure("unable to load rubocop config. Please ensure .rubocop.yml file is present at your project's root directory")
     end
 
-    def temp_config(initial_config:)
+    def generate_temp_rubocop_config_without_todo(initial_config:)
       initial_config.dig("inherit_from")&.delete(".rubocop_todo.yml")
 
       Success(File.write(TEMP_CONFIG_PATH, initial_config.to_yaml))
-    rescue
-      Failure("Failed to create a temporary config file to generate stats")
+    rescue IOError => e
+      Failure("Failed to create a temporary config file to generate stats: #{e}")
     end
 
     def generate_stats
