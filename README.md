@@ -6,7 +6,6 @@ A command–line utility for refactoring planning. It uses `.rubocop_todo.yml` a
 
 Prerequisites:
 
-- `sed`;
 - `git` repo;
 - generated `.rubocop_todo.yml`.
 
