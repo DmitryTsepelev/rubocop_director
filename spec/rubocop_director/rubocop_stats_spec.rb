@@ -1,39 +1,55 @@
 RSpec.describe RubocopDirector::RubocopStats do
   subject { described_class.new.fetch }
-
-  let(:since) { "2023-01-01" }
-
-  let(:sed_command) { "sed '/todo/d' ./.rubocop.yml > tmpfile; mv tmpfile ./.rubocop.yml" }
-  let(:sed_stdout) { "" }
-  let(:sed_stderr) { "" }
-
-  let(:rubocop_command) { "bundle exec rubocop --format json" }
+  let(:config_path) { "./.rubocop.yml" }
+  let(:tmp_config_path) { "./.temp_rubocop.yml" }
+  let(:config_json) { {some_config: "anything"} }
+  let(:rubocop_command) { "bundle exec rubocop -c #{tmp_config_path} --format json" }
   let(:rubocop_stdout) { "" }
   let(:rubocop_stderr) { "" }
 
-  let(:checkout_command) { "git checkout ./.rubocop.yml" }
-
   before do
-    allow(Open3).to receive(:capture3).with(sed_command).and_return([sed_stdout, sed_stderr])
+    allow(YAML).to receive(:load_file).with(config_path).and_return(config_json)
+    allow(File).to receive(:write).with(tmp_config_path, config_json.to_yaml)
     allow(Open3).to receive(:capture3).with(rubocop_command).and_return([rubocop_stdout, rubocop_stderr])
-    allow(Open3).to receive(:capture3).with(checkout_command)
+    allow(File).to receive(:delete).with(tmp_config_path)
   end
 
-  context "when sed returns errors" do
-    let(:sed_stderr) { "error" }
+  context "when initial config is not loaded" do
+    before do
+      expect(YAML).to receive(:load_file).with(config_path).and_raise(Errno::ENOENT)
+    end
 
     it "returns failure" do
       expect(subject).to be_failure
-      expect(subject.failure).to eq("Failed to remove TODO from rubocop config: #{sed_stderr}")
+      expect(subject.failure).to eq("unable to load rubocop config. Please ensure .rubocop.yml file is present at your project's root directory")
+    end
+  end
+
+  context "when temp config is not created" do
+    before do
+      allow(File).to receive(:write).with(tmp_config_path, config_json.to_yaml).and_raise IOError
     end
 
-    it "not runs rubocop command" do
-      subject
+    it "returns failure" do
+      expect(subject).to be_failure
+      expect(subject.failure).to eq("Failed to create a temporary config file to generate stats: IOError")
+    end
+
+    it "does not run rubocop command" do
       expect(Open3).not_to have_received(:capture3).with(rubocop_command)
     end
   end
 
-  context "when rubocop returns no errors" do
+  context "when stats are not generated" do
+    let(:rubocop_stderr) { "some error" }
+
+    it "returns failure" do
+      expect(subject).to be_failure
+      expect(subject.failure).to eq("Failed to fetch rubocop stats: #{rubocop_stderr}")
+    end
+  end
+
+  context "when stats are generated" do
     let(:rubocop_stdout) do
       "{\"files\":[{\"path\":\"app/models/user.rb\",\"offenses\":[{\"severity\":\"convention\",\"message\":\"Some error\",\"cop_name\":\"Rails/SomeCop\",\"corrected\":false,\"correctable\":false,\"location\":{\"start_line\":83,\"start_column\":55,\"last_line\":83,\"last_column\":76,\"length\":22,\"line\":83,\"column\":55}}]}]}"
     end
@@ -66,35 +82,6 @@ RSpec.describe RubocopDirector::RubocopStats do
           }
         ]
       )
-    end
-
-    it "runs sed command" do
-      subject
-      expect(Open3).to have_received(:capture3).with(sed_command)
-    end
-
-    it "runs checkout command" do
-      subject
-      expect(Open3).to have_received(:capture3).with(checkout_command)
-    end
-  end
-
-  context "when rubocop returns errors" do
-    let(:rubocop_stderr) { "error" }
-
-    it "returns failure" do
-      expect(subject).to be_failure
-      expect(subject.failure).to eq("Failed to fetch rubocop stats: #{rubocop_stderr}")
-    end
-
-    it "runs sed command" do
-      subject
-      expect(Open3).to have_received(:capture3).with(sed_command)
-    end
-
-    it "runs checkout command" do
-      subject
-      expect(Open3).to have_received(:capture3).with(checkout_command)
     end
   end
 end
