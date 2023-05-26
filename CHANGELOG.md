@@ -2,6 +2,7 @@
 
 ## master
 
+- [PR #9](https://github.com/DmitryTsepelev/rubocop_director/pull/9) Removed sed dependency: stats generated using temp config ([@samarthkathal][])
 - [PR #8](https://github.com/DmitryTsepelev/rubocop_director/pull/8) Reorder plan flow to run expensive check first ([@DmitryTsepelev][])
 - [PR #7](https://github.com/DmitryTsepelev/rubocop_director/pull/7) GenerateConfig will a prompt to overwrite when config already exists ([@samarthkathal][])
 
