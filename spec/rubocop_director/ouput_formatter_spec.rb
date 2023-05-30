@@ -29,16 +29,19 @@ RSpec.describe RubocopDirector::OutputFormatter do
 
     expect(subject.value!).to eq(
       [
-        "--------------------",
-        "app/models/user.rb",
-        "updated 2 times since 2023-01-01",
-        "offences: Rails/SomeCop - 2, Rails/AnotherCop - 3",
-        "refactoring value: 15 (75.0%)",
-        "--------------------",
-        "app/controllers/user_controller.rb",
-        "updated 3 times since 2023-01-01",
-        "offences: Rails/SomeCop - 3",
-        "refactoring value: 5 (25.0%)"
+        "",
+        "Path: app/models/user.rb",
+        "Updated 2 times since 2023-01-01",
+        "Offenses:",
+        "  🚓 Rails/SomeCop - 2",
+        "  🚓 Rails/AnotherCop - 3",
+        "Refactoring value: 15 (75.0%)",
+        "",
+        "Path: app/controllers/user_controller.rb",
+        "Updated 3 times since 2023-01-01",
+        "Offenses:",
+        "  🚓 Rails/SomeCop - 3",
+        "Refactoring value: 5 (25.0%)"
       ]
     )
   end

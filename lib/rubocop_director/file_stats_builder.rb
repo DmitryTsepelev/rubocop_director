@@ -10,6 +10,8 @@ module RubocopDirector
     end
 
     def build
+      update_weight = yield fetch_update_weight
+
       file_stats = files_with_offenses.map do |file|
         stats = {
           path: file["path"],
@@ -17,9 +19,15 @@ module RubocopDirector
           offense_counts: file["offenses"].group_by { |offense| offense["cop_name"] }.transform_values(&:count)
         }
 
-        stats[:value] = yield find_refactoring_value(stats)
+        stats[:cop_value] = yield find_refactoring_value(stats)
 
         stats
+      end
+
+      total_updates_count = file_stats.sum { |f| f[:updates_count] }
+
+      file_stats = file_stats.each do |stats|
+        stats[:value] = stats[:cop_value] * ((stats[:updates_count] / total_updates_count.to_f)**update_weight)
       end
 
       Success(file_stats.sort_by { _1[:value] }.reverse)
@@ -32,14 +40,12 @@ module RubocopDirector
     def files_with_offenses = rubocop_json.select { |file| file["offenses"].any? }
 
     def find_refactoring_value(file)
-      update_weight = yield fetch_update_weight
-
-      offence_sum = file[:offense_counts].sum do |cop_name, count|
+      value = file[:offense_counts].sum do |cop_name, count|
         cop_weight = yield fetch_cop_weight(cop_name)
         cop_weight * count
       end
 
-      Success((offence_sum * file[:updates_count] * update_weight).to_f)
+      Success(value)
     end
 
     def fetch_cop_weight(cop_name)
