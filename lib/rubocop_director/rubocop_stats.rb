@@ -11,6 +11,10 @@ module RubocopDirector
 
     TEMP_CONFIG_PATH = "./.temp_rubocop.yml"
 
+    def initialize(rubocop_path)
+      @rubocop_path = rubocop_path
+    end
+
     def fetch
       config = yield load_config
       yield generate_temp_rubocop_config_without_todo(initial_config: config)
@@ -24,7 +28,7 @@ module RubocopDirector
     private
 
     def load_config
-      Success(YAML.load_file("./.rubocop.yml"))
+      Success(YAML.load_file(@rubocop_path))
     rescue Errno::ENOENT
       Failure("unable to load rubocop config. Please ensure .rubocop.yml file is present at your project's root directory")
     end
