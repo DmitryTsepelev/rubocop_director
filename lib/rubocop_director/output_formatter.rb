@@ -15,11 +15,13 @@ module RubocopDirector
 
     def call
       result = @ranged_files.each_with_object([]) do |file, result|
-        result << "-" * 20
-        result << file[:path]
-        result << "updated #{file[:updates_count]} times since #{@since}"
-        result << "offences: #{file[:offense_counts].map { |cop, count| "#{cop} - #{count}" }.join(", ")}"
-        result << "refactoring value: #{file[:value]} (#{(100 * file[:value] / total_value.to_f).round(5)}%)"
+        result << ""
+
+        result << "Path: #{file[:path]}"
+        result << "Updated #{file[:updates_count]} times since #{@since}"
+        result << "Offenses:"
+        file[:offense_counts].each { |cop, count| result << "  🚓 #{cop} - #{count}" }
+        result << "Refactoring value: #{file[:value]} (#{(100 * file[:value] / total_value.to_f).round(5)}%)"
       end
 
       Success(result)

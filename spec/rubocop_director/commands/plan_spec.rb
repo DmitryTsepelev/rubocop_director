@@ -60,16 +60,19 @@ RSpec.describe RubocopDirector::Commands::Plan do
 
     expect(subject.value!).to eq(
       [
-        "--------------------",
-        "app/models/user.rb",
-        "updated 136 times since 1995-01-01",
-        "offences: Rails/SomeCop - 1, Rails/AnotherCop - 1",
-        "refactoring value: 61.199999999999996 (50.74627%)",
-        "--------------------",
-        "app/controllers/user_controller.rb",
-        "updated 99 times since 1995-01-01",
-        "offences: Rails/SomeCop - 2",
-        "refactoring value: 59.4 (49.25373%)"
+        "",
+        "Path: app/controllers/user_controller.rb",
+        "Updated 99 times since 1995-01-01",
+        "Offenses:",
+        "  🚓 Rails/SomeCop - 2",
+        "Refactoring value: 1.5431217598108933 (54.79575%)",
+        "",
+        "Path: app/models/user.rb",
+        "Updated 136 times since 1995-01-01",
+        "Offenses:",
+        "  🚓 Rails/SomeCop - 1",
+        "  🚓 Rails/AnotherCop - 1",
+        "Refactoring value: 1.2730122208719792 (45.20425%)"
       ]
     )
   end
@@ -89,16 +92,19 @@ RSpec.describe RubocopDirector::Commands::Plan do
 
       expect(subject.value!).to eq(
         [
-          "--------------------",
-          "app/models/user.rb",
-          "updated 136 times since 2023-01-01",
-          "offences: Rails/SomeCop - 1, Rails/AnotherCop - 1",
-          "refactoring value: 61.199999999999996 (50.74627%)",
-          "--------------------",
-          "app/controllers/user_controller.rb",
-          "updated 99 times since 2023-01-01",
-          "offences: Rails/SomeCop - 2",
-          "refactoring value: 59.4 (49.25373%)"
+          "",
+          "Path: app/controllers/user_controller.rb",
+          "Updated 99 times since 2023-01-01",
+          "Offenses:",
+          "  🚓 Rails/SomeCop - 2",
+          "Refactoring value: 1.5431217598108933 (54.79575%)",
+          "",
+          "Path: app/models/user.rb",
+          "Updated 136 times since 2023-01-01",
+          "Offenses:",
+          "  🚓 Rails/SomeCop - 1",
+          "  🚓 Rails/AnotherCop - 1",
+          "Refactoring value: 1.2730122208719792 (45.20425%)"
         ]
       )
     end

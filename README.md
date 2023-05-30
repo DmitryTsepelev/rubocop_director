@@ -43,21 +43,24 @@ As a result you'll get something like this:
 💡 Checking git history since 1995-01-01 to find hot files...
 💡🎥 Running rubocop to get the list of offences to fix...
 💡🎥🎬 Calculating a list of files to refactor...
---------------------
-spec/models/user.rb
-updated 10 times since -4712-01-01
-offences: RSpec/AroundBlock - 8
-refactoring value: 110 (55%)
---------------------
-spec/models/order.rb
-updated 20 times since -4712-01-01
-offences: Rspec/BeEql - 4
-refactoring value: 90 (45%)
+
+Path: app/controllers/user_controller.rb
+Updated 99 times since 2023-01-01
+Offenses:
+  🚓 Rails/SomeCop - 2
+Refactoring value: 1.5431217598108933 (54.79575%)
+
+Path: app/models/user.rb
+Updated 136 times since 2023-01-01
+Offenses:
+  🚓 Rails/SomeCop - 1
+  🚓 Rails/AnotherCop - 1
+Refactoring value: 1.2730122208719792 (45.20425%)
 ```
 
 > Want a different output format (e.g., CSV)? Let me know, open an issue!
 
-Value is calculated using a formula: `sum of value from each cop (<number of offences> * <cop weight> * <number of file updates> * <update weight>)`.
+Value is calculated using a formula: `sum of value from each cop (<count of offences> * <cop weight> * (<count of file updates> / <total count of updates>) ** <update weight>)`.
 
 If you need to count updates from a specific date—use `--since`:
 
