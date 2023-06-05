@@ -43,7 +43,7 @@ module RubocopDirector
       @command ||= if @options.key?(:generate_config)
         Commands::GenerateConfig.new(**@options.slice(:todo_config, :director_config))
       else
-        Commands::Plan.new(**@options.slice(:since, :director_config, :rubocop_config, :todo_config))
+        Commands::Plan.new(**@options.slice(:since, :director_config, :rubocop_config))
       end
     end
 

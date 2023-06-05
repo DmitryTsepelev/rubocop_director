@@ -14,11 +14,10 @@ module RubocopDirector
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:run)
 
-      def initialize(director_config:, rubocop_config:, todo_config:, since: "1995-01-01")
+      def initialize(director_config:, rubocop_config:, since: "1995-01-01")
         @since = since.to_s
         @director_config = director_config
         @rubocop_config = rubocop_config
-        @todo_config = todo_config
       end
 
       def run
