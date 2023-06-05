@@ -16,8 +16,8 @@ module RubocopDirector
 
       def initialize(director_config:, rubocop_config:, since: "1995-01-01")
         @since = since.to_s
-        @director_config = director_config
-        @rubocop_config = rubocop_config
+        @director_config_path = director_config
+        @rubocop_config_path = rubocop_config
       end
 
       def run
@@ -32,14 +32,14 @@ module RubocopDirector
       private
 
       def load_config
-        Success(YAML.load_file(@director_config))
+        Success(YAML.load_file(@director_config_path))
       rescue Errno::ENOENT
-        Failure("#{@director_config} not found, generate it using `rubocop-director --generate-config`")
+        Failure("#{@director_config_path} not found, generate it using `rubocop-director --generate-config`")
       end
 
       def load_rubocop_json
         puts "💡 Running rubocop to get the list of offences to fix..."
-        RubocopStats.new(@rubocop_config).fetch
+        RubocopStats.new(@rubocop_config_path).fetch
       end
 
       def load_git_stats

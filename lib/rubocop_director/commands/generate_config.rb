@@ -9,8 +9,8 @@ module RubocopDirector
       RUBOCOP_TODO = ".rubocop_todo.yml"
 
       def initialize(director_config:, todo_config:)
-        @director_config = director_config
-        @todo_config = todo_config
+        @director_config_path = director_config
+        @todo_config_path = todo_config
       end
 
       def run
@@ -23,30 +23,30 @@ module RubocopDirector
       private
 
       def load_config
-        Success(YAML.load_file(@todo_config))
+        Success(YAML.load_file(@todo_config_path))
       rescue Errno::ENOENT
-        Failure("#{@todo_config} not found, generate it using `rubocop --regenerate-todo`")
+        Failure("#{@todo_config_path} not found, generate it using `rubocop --regenerate-todo`")
       end
 
       def check_config_already_exists
         return Success() if config_not_exists? || override_config?
 
-        Failure("previous version of #{@director_config} was preserved.")
+        Failure("previous version of #{@director_config_path} was preserved.")
       end
 
       def config_not_exists?
-        !File.file?(@director_config)
+        !File.file?(@director_config_path)
       end
 
       def override_config?
-        puts("#{@director_config} already exists, do you want to override it? (y/n)")
+        puts("#{@director_config_path} already exists, do you want to override it? (y/n)")
         $stdin.gets.chomp == "y"
       end
 
       def create_config(rubocop_todo)
         weights = rubocop_todo.keys.to_h { |key| [key, 1] }
 
-        File.write(@director_config, {
+        File.write(@director_config_path, {
           "update_weight" => 1,
           "default_cop_weight" => 1,
           "weights" => weights
