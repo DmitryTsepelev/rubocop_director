@@ -1,7 +1,10 @@
 RSpec.describe RubocopDirector::Commands::GenerateConfig do
   subject { command.run }
 
-  let(:command) { described_class.new }
+  let(:director_config_path) { Pathname.new(".rubocop_director.yml") }
+  let(:todo_config_path) { Pathname.new(".rubocop_todo.yml") }
+  let(:args) { {director_config: director_config_path, todo_config: todo_config_path} }
+  let(:command) { described_class.new(**args) }
 
   let(:rubocop_todo_content) do
     {
@@ -20,7 +23,7 @@ RSpec.describe RubocopDirector::Commands::GenerateConfig do
 
   context "when .rubocop_todo.yml exists" do
     before do
-      allow(YAML).to receive(:load_file).with(".rubocop_todo.yml").and_return(rubocop_todo_content)
+      allow(YAML).to receive(:load_file).with(todo_config_path).and_return(rubocop_todo_content)
     end
 
     it "returns success" do
@@ -32,19 +35,19 @@ RSpec.describe RubocopDirector::Commands::GenerateConfig do
       subject
 
       expect(File).to have_received(:write).with(
-        ".rubocop-director.yml",
+        director_config_path,
         "---\nupdate_weight: 1\ndefault_cop_weight: 1\nweights:\n  Rails/SomeCop: 1\n"
       )
     end
 
     context "when .rubocop-director.yml config is already generated" do
       before do
-        allow(File).to receive(:file?).with(".rubocop-director.yml").and_return(true)
+        allow(File).to receive(:file?).with(director_config_path).and_return(true)
       end
 
       context "when user wants to override the previous config" do
         before do
-          allow(command).to receive_message_chain(:gets, :chomp).and_return("y")
+          allow($stdin).to receive_message_chain(:gets, :chomp).and_return("y")
         end
 
         it "overrides the previous config" do
@@ -55,12 +58,12 @@ RSpec.describe RubocopDirector::Commands::GenerateConfig do
 
       context "when user wants to preserve the previous config" do
         before do
-          allow(command).to receive_message_chain(:gets, :chomp).and_return("n")
+          allow($stdin).to receive_message_chain(:gets, :chomp).and_return("n")
         end
 
         it "not creates a new file" do
           expect(subject).to be_failure
-          expect(subject.failure).to eq("previous version of .rubocop-director.yml was preserved.")
+          expect(subject.failure).to eq("previous version of .rubocop_director.yml was preserved.")
 
           expect(File).not_to have_received(:write)
         end
@@ -70,7 +73,7 @@ RSpec.describe RubocopDirector::Commands::GenerateConfig do
 
   context "when .rubocop_todo.yml not exists" do
     before do
-      allow(YAML).to receive(:load_file).with(".rubocop_todo.yml").and_raise(Errno::ENOENT)
+      allow(YAML).to receive(:load_file).with(todo_config_path).and_raise(Errno::ENOENT)
     end
 
     it "returns failure" do

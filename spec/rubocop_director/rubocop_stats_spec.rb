@@ -1,6 +1,10 @@
 RSpec.describe RubocopDirector::RubocopStats do
-  subject { described_class.new.fetch }
-  let(:config_path) { "./.rubocop.yml" }
+  subject { command.fetch }
+
+  let(:rubocop_config_path) { Pathname.new(".rubocop.yml") }
+  let(:args) { rubocop_config_path }
+  let(:command) { described_class.new(args) }
+
   let(:tmp_config_path) { "./.temp_rubocop.yml" }
   let(:config_json) { {some_config: "anything"} }
   let(:rubocop_command) { "bundle exec rubocop -c #{tmp_config_path} --format json" }
@@ -8,7 +12,7 @@ RSpec.describe RubocopDirector::RubocopStats do
   let(:rubocop_stderr) { "" }
 
   before do
-    allow(YAML).to receive(:load_file).with(config_path).and_return(config_json)
+    allow(YAML).to receive(:load_file).with(rubocop_config_path).and_return(config_json)
     allow(File).to receive(:write).with(tmp_config_path, config_json.to_yaml)
     allow(Open3).to receive(:capture3).with(rubocop_command).and_return([rubocop_stdout, rubocop_stderr])
     allow(File).to receive(:delete).with(tmp_config_path)
@@ -16,7 +20,7 @@ RSpec.describe RubocopDirector::RubocopStats do
 
   context "when initial config is not loaded" do
     before do
-      expect(YAML).to receive(:load_file).with(config_path).and_raise(Errno::ENOENT)
+      expect(YAML).to receive(:load_file).with(rubocop_config_path).and_raise(Errno::ENOENT)
     end
 
     it "returns failure" do
