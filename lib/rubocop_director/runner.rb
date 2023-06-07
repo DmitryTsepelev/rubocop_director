@@ -22,7 +22,6 @@ module RubocopDirector
     private
 
     def verify_options
-      @options[:todo_config] = verified_path(config_name: TODO_CONFIG_NAME, path: @options[:todo_config])
       @options[:rubocop_config] = verified_path(config_name: RUBOCOP_CONFIG_NAME, path: @options[:rubocop_config])
       @options[:director_config] = verified_path(config_name: CONFIG_NAME, path: @options[:director_config])
     end
@@ -57,7 +56,6 @@ module RubocopDirector
 
         p.on("--generate_config", "Generate default config based on .rubocop_todo.yml")
         p.on("--since=SINCE", Date, "Specify date to start checking git history")
-        p.on("--todo_config=PATH", Pathname, "Specify path where .rubocop_todo.yml config must be read from, default path: {PROJECTROOT}/.rubocop_todo.yml")
         p.on("--director_config=PATH", Pathname, "Specify path where .rubocop_director.yml config must be read from OR written to, default path: {PROJECTROOT}/.rubocop_director.yml")
         p.on("--rubocop_config=PATH", Pathname, "Specify path where .rubocop.yml config must be read from, default path: {PROJECTROOT}/.rubocop.yml")
 
