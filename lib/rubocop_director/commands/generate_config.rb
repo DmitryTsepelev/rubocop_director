@@ -8,9 +8,8 @@ module RubocopDirector
 
       RUBOCOP_TODO = ".rubocop_todo.yml"
 
-      def initialize(director_config:, todo_config:)
+      def initialize(director_config:)
         @director_config_path = director_config
-        @todo_config_path = todo_config
       end
 
       def run

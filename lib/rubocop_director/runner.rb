@@ -40,8 +40,8 @@ module RubocopDirector
     end
 
     def command
-      @command ||= if @options.key?(:generate_config)
-        Commands::GenerateConfig.new(**@options.slice(:todo_config, :director_config))
+      @command ||= if @options[:generate_config]
+        Commands::GenerateConfig.new(**@options.slice(:director_config))
       else
         Commands::Plan.new(**@options.slice(:since, :director_config, :rubocop_config))
       end
