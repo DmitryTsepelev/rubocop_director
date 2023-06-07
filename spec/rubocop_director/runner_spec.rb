@@ -30,7 +30,7 @@ RSpec.describe RubocopDirector::Runner do
       director_config: director_path,
       rubocop_config: rubocop_path
     }
-    options.merge!(since: since) unless since.nil?
+    options[:since] = since unless since.nil?
 
     options
   end
