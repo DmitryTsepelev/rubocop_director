@@ -2,8 +2,8 @@ RSpec.describe RubocopDirector::Commands::GenerateConfig do
   subject { command.run }
 
   let(:director_config_path) { Pathname.new(".rubocop_director.yml") }
-  let(:todo_config_path) { Pathname.new(".rubocop_todo.yml") }
-  let(:args) { {director_config: director_config_path, todo_config: todo_config_path} }
+  let(:todo_config_path) { ".rubocop_todo.yml" }
+  let(:args) { {director_config: director_config_path} }
   let(:command) { described_class.new(**args) }
 
   let(:rubocop_todo_content) do

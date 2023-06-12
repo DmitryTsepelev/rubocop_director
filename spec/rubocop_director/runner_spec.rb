@@ -41,7 +41,7 @@ RSpec.describe RubocopDirector::Runner do
     allow(Dir).to receive(:pwd).and_return(Pathname.new("./"))
 
     allow(RubocopDirector::Commands::Plan).to receive(:new).with(**options.slice(:since, :director_config, :rubocop_config)).and_return(plan_mock)
-    allow(RubocopDirector::Commands::GenerateConfig).to receive(:new).with(**options.slice(:director_config, :todo_config)).and_return(generate_config_mock)
+    allow(RubocopDirector::Commands::GenerateConfig).to receive(:new).with(**options.slice(:director_config)).and_return(generate_config_mock)
 
     allow(runner).to receive(:puts)
     allow(runner).to receive(:exit)
