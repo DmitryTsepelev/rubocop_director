@@ -5,8 +5,11 @@ RSpec.describe RubocopDirector::Commands::Plan do
 
   subject { command.run }
 
-  let(:command) { described_class.new(since) }
-  let(:since) { nil }
+  let(:director_config_path) { Pathname.new(".rubocop_director.yml") }
+  let(:rubocop_config_path) { Pathname.new(".rubocop.yml") }
+  let(:since) { "1995-01-01" }
+  let(:args) { {director_config: director_config_path, rubocop_config: rubocop_config_path, since: since} }
+  let(:command) { described_class.new(**args) }
 
   let(:git_log_stats_fetch_result) do
     Success("app/models/user.rb" => 136, "app/controllers/user_controller.rb" => 99)
@@ -50,7 +53,7 @@ RSpec.describe RubocopDirector::Commands::Plan do
 
   before do
     allow(command).to receive(:puts)
-    allow(YAML).to receive(:load_file).with(RubocopDirector::CONFIG_NAME).and_return(config_content)
+    allow(YAML).to receive(:load_file).with(director_config_path).and_return(config_content)
     allow(RubocopDirector::GitLogStats).to receive(:new).and_return(git_log_stats_mock)
     allow(RubocopDirector::RubocopStats).to receive(:new).and_return(rubocop_stats_mock)
   end
@@ -117,14 +120,14 @@ RSpec.describe RubocopDirector::Commands::Plan do
     end
   end
 
-  context "when #{RubocopDirector::CONFIG_NAME} not exists" do
+  context "when director_config file does not exists" do
     before do
-      allow(YAML).to receive(:load_file).with(RubocopDirector::CONFIG_NAME).and_raise(Errno::ENOENT)
+      allow(YAML).to receive(:load_file).with(director_config_path).and_raise(Errno::ENOENT)
     end
 
     it "returns failure" do
       expect(subject).to be_failure
-      expect(subject.failure).to eq(".rubocop-director.yml not found, generate it using `rubocop-director --generate-config`")
+      expect(subject.failure).to eq(".rubocop_director.yml not found, generate it using `rubocop-director --generate-config`")
     end
   end
 
