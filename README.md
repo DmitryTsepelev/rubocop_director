@@ -2,6 +2,8 @@
 
 A command–line utility for refactoring planning. It uses `.rubocop_todo.yml` and git history to prioritize a list of refactorings that can bring the most value.
 
+Read more about my approach in the [post](https://dmitrytsepelev.dev/directing-refactoring).
+
 ## Installation
 
 Prerequisites:
