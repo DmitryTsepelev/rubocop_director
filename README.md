@@ -4,6 +4,8 @@ A command–line utility for refactoring planning. It uses `.rubocop_todo.yml` a
 
 Read more about my approach in the [post](https://dmitrytsepelev.dev/directing-refactoring).
 
+You can support my open–source work [here](https://boosty.to/dmitry_tsepelev).
+
 ## Installation
 
 Prerequisites:
