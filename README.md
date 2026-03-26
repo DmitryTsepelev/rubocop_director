@@ -4,7 +4,10 @@ A command–line utility for refactoring planning. It uses `.rubocop_todo.yml` a
 
 Read more about my approach in the [post](https://dmitrytsepelev.dev/directing-refactoring).
 
-You can support my open–source work [here](https://boosty.to/dmitry_tsepelev).
+## Working on a large Rails codebase?
+
+If you're dealing with a tangled codebase and need help planning the cleanup — I offer
+[Rails architecture and refactoring consulting](https://dmitrytsepelev.dev/consulting/).
 
 ## Installation
 
