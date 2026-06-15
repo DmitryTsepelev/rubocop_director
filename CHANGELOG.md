@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #18](https://github.com/DmitryTsepelev/rubocop_director/pull/18) Relax dry-monads dependency, update CI ([@DmitryTsepelev][])
+
 ## 0.3.0 (2023-06-03)
 
 - [PR #12](https://github.com/DmitryTsepelev/rubocop_director/pull/12) Added option to pass configs as args for all config files ([@samarthkathal][])

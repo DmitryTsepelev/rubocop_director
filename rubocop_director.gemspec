@@ -29,5 +29,5 @@ Gem::Specification.new do |spec|
   spec.executables << "rubocop-director"
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "dry-monads", "1.6"
+  spec.add_dependency "dry-monads", "~> 1.0"
 end
