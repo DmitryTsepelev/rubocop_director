@@ -47,7 +47,7 @@ RSpec.describe RubocopDirector::Commands::GenerateConfig do
 
       context "when user wants to override the previous config" do
         before do
-          allow($stdin).to receive_message_chain(:gets, :chomp).and_return("y")
+          allow($stdin).to receive(:gets).and_return("y")
         end
 
         it "overrides the previous config" do
@@ -58,7 +58,7 @@ RSpec.describe RubocopDirector::Commands::GenerateConfig do
 
       context "when user wants to preserve the previous config" do
         before do
-          allow($stdin).to receive_message_chain(:gets, :chomp).and_return("n")
+          allow($stdin).to receive(:gets).and_return("n")
         end
 
         it "not creates a new file" do

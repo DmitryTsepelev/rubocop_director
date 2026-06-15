@@ -10,10 +10,10 @@ RSpec.describe RubocopDirector::Runner do
   let(:args) { "" }
 
   let(:plan_run_result) { Success("plan success") }
-  let(:plan_mock) { OpenStruct.new(run: plan_run_result) }
+  let(:plan_mock) { double(run: plan_run_result) }
 
   let(:generate_config_run_result) { Success("generate config success") }
-  let(:generate_config_mock) { OpenStruct.new(run: generate_config_run_result) }
+  let(:generate_config_mock) { double(run: generate_config_run_result) }
 
   let(:rubocop_config_name) { ".rubocop.yml" }
   let(:director_config_name) { ".rubocop_director.yml" }

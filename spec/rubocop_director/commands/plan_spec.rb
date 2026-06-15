@@ -14,7 +14,7 @@ RSpec.describe RubocopDirector::Commands::Plan do
   let(:git_log_stats_fetch_result) do
     Success("app/models/user.rb" => 136, "app/controllers/user_controller.rb" => 99)
   end
-  let(:git_log_stats_mock) { OpenStruct.new(fetch: git_log_stats_fetch_result) }
+  let(:git_log_stats_mock) { double(fetch: git_log_stats_fetch_result) }
 
   let(:rubocop_stats_fetch_result) do
     Success(
@@ -38,7 +38,7 @@ RSpec.describe RubocopDirector::Commands::Plan do
       ]
     )
   end
-  let(:rubocop_stats_mock) { OpenStruct.new(fetch: rubocop_stats_fetch_result) }
+  let(:rubocop_stats_mock) { double(fetch: rubocop_stats_fetch_result) }
 
   let(:config_content) do
     {
