@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.4.0 (2026-06-15)
+
 - [PR #18](https://github.com/DmitryTsepelev/rubocop_director/pull/18) Relax dry-monads dependency, update CI ([@DmitryTsepelev][])
 
 ## 0.3.0 (2023-06-03)
